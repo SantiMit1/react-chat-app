@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 import { setDoc, doc } from 'firebase/firestore'
 import { auth, db } from '../../firebase'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 
 const Register = () => {
   const [email, setEmail] = useState("")
@@ -40,6 +40,7 @@ const Register = () => {
         <input className='form-input' type="email" placeholder='Email' required onChange={(e) => setEmail(e.target.value)} />
         <input className='form-input' type="password" placeholder='Contraseña' minLength={6} required onChange={(e) => setContraseña(e.target.value)} />
         <button className='bg-slate-800 px-3 py-2 rounded-full hover:bg-slate-600 transition' type="submit">Registrarse</button>
+        <Link className='text-sm' to={"/login"}>Iniciar Sesión</Link>
         {error && <p className='text-red-600'>{error}</p>}
       </form>
     </div>
