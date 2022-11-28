@@ -1,17 +1,34 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Chat from './Chat'
 import { useNavigate } from 'react-router-dom'
-import { auth } from '../../firebase'
+import { auth, db } from '../../firebase'
+import { query, where, collection, getDocs, doc } from 'firebase/firestore'
 import { signOut } from 'firebase/auth'
 import { BiLogOut } from 'react-icons/bi'
 
 
 const Sidebar = ({ toggled }) => {
     const navigate = useNavigate()
-    
+    const [findUser, setFindUser] = useState("")
+    const [chatUser, setChatUser] = useState()
+    const [error, setError] = useState("")
+
     const handleClick = () => {
         signOut(auth)
         navigate("/login")
+    }
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        const snapshot = await getDocs(query(collection(db, "users"), where("displayName", "==", findUser)))
+        if (snapshot.docs.length > 0) {
+            snapshot.forEach(doc => {
+                setChatUser(doc.data())
+            })
+        } else {
+            setError("No se ha encontrado ningun usuario")
+            setChatUser(false)
+        }
     }
 
     return (
@@ -20,9 +37,17 @@ const Sidebar = ({ toggled }) => {
                 <h1 className='text-xl text-semibold p-4'>React Chat App</h1>
                 <button onClick={handleClick} className='text-xl'><BiLogOut /></button>
             </div>
-            <form className='w-full' onSubmit={(e) => e.preventDefault()}>
-                <input className='py-3 px-2 w-full shadow outline-none text-black' placeholder='Buscar usuario' type="text" />
+            <form className='w-full' onSubmit={handleSubmit}>
+                <input onChange={(e) => setFindUser(e.target.value)} value={findUser} className='py-3 px-2 w-full shadow outline-none text-black' placeholder='Buscar usuario' type="text" />
             </form>
+            <div className='w-full'>
+                {chatUser ? (
+                    <div className='w-full px-2 py-5 border-y border-gray-200 bg-emerald-50 flex flex-col'>
+                        <h3>{chatUser.displayName}</h3>
+                        <p className='text-gray-400'>ultimo mensaje de {chatUser.displayName}</p>
+                    </div>
+                ) : <p className='text-center'>{error}</p>}
+            </div>
             <div className='w-full overflow-y-scroll'>
                 <Chat />
                 <Chat />
