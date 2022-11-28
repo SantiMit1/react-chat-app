@@ -1,16 +1,18 @@
-import React, { useState } from 'react'
-import Sidebar from './components/Sidebar'
-import { GiHamburgerMenu } from 'react-icons/gi'
-import ChatWindow from './components/ChatWindow'
+import React from 'react'
+import { Route, Routes } from 'react-router-dom'
+import Main from './pages/Main'
+import Register from './pages/Register'
+import Login from './pages/Login'
 
 const App = () => {
-  const [sidebar, setSidebar] = useState(true)
 
   return (
     <div className='min-w-full min-h-screen bg-slate-800 text-white'>
-      <button onClick={() => setSidebar(!sidebar)} className={`bg-white text-black p-1 rounded shadow m-2 text-3xl fixed z-20`}><GiHamburgerMenu /></button>
-      <Sidebar toggled={sidebar} />
-      <ChatWindow />
+      <Routes>
+        <Route path='/' element={<Main />} />
+        <Route path='register' element={<Register />} />
+        <Route path='login' element={<Login />} />
+      </Routes>
     </div>
   )
 }

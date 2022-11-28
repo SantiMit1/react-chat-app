@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+    .form-input {
+        @apply px-2 py-3 rounded-lg shadow outline-none text-black
+    }
+}
