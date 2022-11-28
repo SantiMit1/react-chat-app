@@ -7,7 +7,7 @@ const App = () => {
   const [sidebar, setSidebar] = useState(true)
 
   return (
-    <div className='min-w-full min-h-screen bg-slate-700 text-white'>
+    <div className='min-w-full min-h-screen bg-slate-800 text-white'>
       <button onClick={() => setSidebar(!sidebar)} className={`bg-white text-black p-1 rounded shadow m-2 text-3xl fixed z-20`}><GiHamburgerMenu /></button>
       <Sidebar toggled={sidebar} />
       <ChatWindow />
