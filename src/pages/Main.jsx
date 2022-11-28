@@ -9,7 +9,7 @@ const Main = () => {
     return (
         <>
             <button onClick={() => setSidebar(!sidebar)} className={`bg-white text-black p-1 rounded shadow m-2 text-3xl fixed z-20`}><GiHamburgerMenu /></button>
-            <Sidebar toggled={sidebar} />
+            <Sidebar toggled={sidebar} toggleSidebar={() => setSidebar(!sidebar)} />
             <ChatWindow />
         </>
     )

@@ -8,7 +8,7 @@ import { BiLogOut } from 'react-icons/bi'
 import { AuthContext } from '../context/AuthContext'
 
 
-const Sidebar = ({ toggled }) => {
+const Sidebar = ({ toggled, toggleSidebar }) => {
     const navigate = useNavigate()
     const { user } = useContext(AuthContext)
     const [findUser, setFindUser] = useState("")
@@ -55,6 +55,11 @@ const Sidebar = ({ toggled }) => {
                 [combinedId+".date"]: serverTimestamp()
             })
         }
+
+        setChatUser(null)
+        setError("")
+        setFindUser("")
+        toggleSidebar()
     }
 
     return (
@@ -70,7 +75,7 @@ const Sidebar = ({ toggled }) => {
                 {chatUser ? (
                     <div className='w-full cursor-pointer px-2 py-5 mb-5 border-y border-gray-200 bg-emerald-50 flex flex-col' onClick={handleSelect}>
                         <h3>{chatUser.displayName}</h3>
-                        <p className='text-gray-400'>ultimo mensaje de {chatUser.displayName}</p>
+                        <p className='text-gray-400'>{chatUser.email}</p>
                     </div>
                 ) : <p className='text-center'>{error}</p>}
             </div>
