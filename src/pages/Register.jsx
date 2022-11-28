@@ -25,6 +25,7 @@ const Register = () => {
           displayName: res.user.displayName,
           email: res.user.email
         })
+        await setDoc(doc(db, "userChats", res.user.uid), {})
         navigate("/")
       }
       catch(error) {

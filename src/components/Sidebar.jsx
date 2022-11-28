@@ -1,14 +1,16 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import Chat from './Chat'
 import { useNavigate } from 'react-router-dom'
 import { auth, db } from '../../firebase'
-import { query, where, collection, getDocs, doc } from 'firebase/firestore'
+import { query, where, collection, getDocs, getDoc, setDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore'
 import { signOut } from 'firebase/auth'
 import { BiLogOut } from 'react-icons/bi'
+import { AuthContext } from '../context/AuthContext'
 
 
 const Sidebar = ({ toggled }) => {
     const navigate = useNavigate()
+    const { user } = useContext(AuthContext)
     const [findUser, setFindUser] = useState("")
     const [chatUser, setChatUser] = useState()
     const [error, setError] = useState("")
@@ -31,6 +33,30 @@ const Sidebar = ({ toggled }) => {
         }
     }
 
+    const handleSelect = async () => {
+        const combinedId = user.uid > chatUser.uid ? user.uid + chatUser.uid : chatUser.uid + user.uid
+        const res = await getDoc(doc(db, "chats", combinedId))
+        if(!res.exists()) {
+            await setDoc(doc(db, "chats", combinedId), {messages: []})
+
+            await updateDoc(doc(db, "userChats", user.uid), {
+                [combinedId+".userInfo"]: {
+                    uid: chatUser.uid,
+                    displayName: chatUser.displayName
+                },
+                [combinedId+".date"]: serverTimestamp()
+            })
+
+            await updateDoc(doc(db, "userChats", chatUser.uid), {
+                [combinedId+".userInfo"]: {
+                    uid: user.uid,
+                    displayName: user.displayName
+                },
+                [combinedId+".date"]: serverTimestamp()
+            })
+        }
+    }
+
     return (
         <div className={`flex flex-col items-center justify-start fixed top-0 min-w-full h-screen text-black bg-gray-50 ${toggled ? 'translate-x-0' : '-translate-x-full'} transition z-10`}>
             <div className='flex flex-row justify-around w-full'>
@@ -42,7 +68,7 @@ const Sidebar = ({ toggled }) => {
             </form>
             <div className='w-full'>
                 {chatUser ? (
-                    <div className='w-full px-2 py-5 border-y border-gray-200 bg-emerald-50 flex flex-col'>
+                    <div className='w-full cursor-pointer px-2 py-5 mb-5 border-y border-gray-200 bg-emerald-50 flex flex-col' onClick={handleSelect}>
                         <h3>{chatUser.displayName}</h3>
                         <p className='text-gray-400'>ultimo mensaje de {chatUser.displayName}</p>
                     </div>
