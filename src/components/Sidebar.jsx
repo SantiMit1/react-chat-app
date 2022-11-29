@@ -6,11 +6,13 @@ import { query, where, collection, getDocs, getDoc, setDoc, doc, updateDoc, serv
 import { signOut } from 'firebase/auth'
 import { BiLogOut } from 'react-icons/bi'
 import { AuthContext } from '../context/AuthContext'
+import { ChatContext } from '../context/ChatContext'
 
 
 const Sidebar = ({ toggled, toggleSidebar }) => {
     const navigate = useNavigate()
     const { user } = useContext(AuthContext)
+    const { dispatch } = useContext(ChatContext)
     const [findUser, setFindUser] = useState("")
     const [chatUser, setChatUser] = useState()
     const [chats, setChats] = useState([])
@@ -48,7 +50,7 @@ const Sidebar = ({ toggled, toggleSidebar }) => {
         }
     }
 
-    const handleSelect = async () => {
+    const createChat = async (userInfo) => {
         const combinedId = user.uid > chatUser.uid ? user.uid + chatUser.uid : chatUser.uid + user.uid
         const res = await getDoc(doc(db, "chats", combinedId))
         if (!res.exists()) {
@@ -74,6 +76,13 @@ const Sidebar = ({ toggled, toggleSidebar }) => {
         setChatUser(null)
         setError("")
         setFindUser("")
+        dispatch({ type: "CHANGE_USER", payload: userInfo })
+        toggleSidebar()
+    }
+
+    const openChat = (userInfo) => {
+        console.log("abriendo chat");
+        dispatch({ type: "CHANGE_USER", payload: userInfo })
         toggleSidebar()
     }
 
@@ -88,7 +97,7 @@ const Sidebar = ({ toggled, toggleSidebar }) => {
             </form>
             <div className='w-full'>
                 {chatUser ? (
-                    <div className='w-full cursor-pointer px-2 py-5 mb-5 border-y border-gray-200 bg-emerald-50 flex flex-col' onClick={handleSelect}>
+                    <div className='w-full cursor-pointer px-2 py-5 mb-5 border-y border-gray-200 bg-emerald-50 flex flex-col' onClick={() => createChat(chatUser)}>
                         <h3>{chatUser.displayName}</h3>
                         <p className='text-gray-400'>{chatUser.email}</p>
                     </div>
@@ -96,7 +105,7 @@ const Sidebar = ({ toggled, toggleSidebar }) => {
             </div>
             <div className='w-full overflow-y-scroll'>
                 {Object.entries(chats)?.map(chat => {
-                    return (<Chat displayName={chat[1].userInfo.displayName} lastMessage={chat[1].lastMessage?.text} key={chat[0]}/>)
+                    return (<div key={chat[0]} onClick={() => openChat(chat[1].userInfo)}><Chat displayName={chat[1].userInfo.displayName} lastMessage={chat[1].lastMessage?.text} /></div>)
                 })}
             </div>
         </div>
