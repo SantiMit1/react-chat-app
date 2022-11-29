@@ -1,8 +1,8 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Chat from './Chat'
 import { useNavigate } from 'react-router-dom'
 import { auth, db } from '../../firebase'
-import { query, where, collection, getDocs, getDoc, setDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore'
+import { query, where, collection, getDocs, getDoc, setDoc, doc, updateDoc, serverTimestamp, onSnapshot } from 'firebase/firestore'
 import { signOut } from 'firebase/auth'
 import { BiLogOut } from 'react-icons/bi'
 import { AuthContext } from '../context/AuthContext'
@@ -13,7 +13,22 @@ const Sidebar = ({ toggled, toggleSidebar }) => {
     const { user } = useContext(AuthContext)
     const [findUser, setFindUser] = useState("")
     const [chatUser, setChatUser] = useState()
+    const [chats, setChats] = useState([])
     const [error, setError] = useState("")
+
+    useEffect(() => {
+        const getChats = () => {
+            const unsub = onSnapshot(doc(db, "userChats", user.uid), doc => {
+                setChats(doc.data())
+            })
+
+            return () => {
+                unsub()
+            }
+        }
+
+        user.uid && getChats()
+    }, [user.uid])
 
     const handleClick = () => {
         signOut(auth)
@@ -36,23 +51,23 @@ const Sidebar = ({ toggled, toggleSidebar }) => {
     const handleSelect = async () => {
         const combinedId = user.uid > chatUser.uid ? user.uid + chatUser.uid : chatUser.uid + user.uid
         const res = await getDoc(doc(db, "chats", combinedId))
-        if(!res.exists()) {
-            await setDoc(doc(db, "chats", combinedId), {messages: []})
+        if (!res.exists()) {
+            await setDoc(doc(db, "chats", combinedId), { messages: [] })
 
             await updateDoc(doc(db, "userChats", user.uid), {
-                [combinedId+".userInfo"]: {
+                [combinedId + ".userInfo"]: {
                     uid: chatUser.uid,
                     displayName: chatUser.displayName
                 },
-                [combinedId+".date"]: serverTimestamp()
+                [combinedId + ".date"]: serverTimestamp()
             })
 
             await updateDoc(doc(db, "userChats", chatUser.uid), {
-                [combinedId+".userInfo"]: {
+                [combinedId + ".userInfo"]: {
                     uid: user.uid,
                     displayName: user.displayName
                 },
-                [combinedId+".date"]: serverTimestamp()
+                [combinedId + ".date"]: serverTimestamp()
             })
         }
 
@@ -80,9 +95,9 @@ const Sidebar = ({ toggled, toggleSidebar }) => {
                 ) : <p className='text-center'>{error}</p>}
             </div>
             <div className='w-full overflow-y-scroll'>
-                <Chat />
-                <Chat />
-                <Chat />
+                {Object.entries(chats)?.map(chat => {
+                    return (<Chat displayName={chat[1].userInfo.displayName} lastMessage={chat[1].lastMessage?.text} key={chat[0]}/>)
+                })}
             </div>
         </div>
     )
