@@ -81,7 +81,6 @@ const Sidebar = ({ toggled, toggleSidebar }) => {
     }
 
     const openChat = (userInfo) => {
-        console.log("abriendo chat");
         dispatch({ type: "CHANGE_USER", payload: userInfo })
         toggleSidebar()
     }
