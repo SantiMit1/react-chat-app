@@ -103,7 +103,7 @@ const Sidebar = ({ toggled, toggleSidebar }) => {
                 ) : <p className='text-center'>{error}</p>}
             </div>
             <div className='w-full overflow-y-scroll'>
-                {Object.entries(chats)?.map(chat => {
+                {Object.entries(chats)?.sort((a,b) => b[1].date - a[1].date).map(chat => {
                     return (<div key={chat[0]} onClick={() => openChat(chat[1].userInfo)}><Chat displayName={chat[1].userInfo.displayName} lastMessage={chat[1].lastMessage?.text} /></div>)
                 })}
             </div>

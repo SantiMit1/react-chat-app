@@ -1,4 +1,4 @@
-import { arrayUnion, doc, onSnapshot, Timestamp, updateDoc } from 'firebase/firestore'
+import { arrayUnion, doc, onSnapshot, serverTimestamp, Timestamp, updateDoc } from 'firebase/firestore'
 import React, { useContext, useEffect, useState } from 'react'
 import { MdSend } from 'react-icons/md'
 import { db } from '../../firebase'
@@ -35,6 +35,20 @@ const ChatWindow = () => {
       )
     })
     setMessage("")
+
+    await updateDoc(doc(db, "userChats", user.uid), {
+      [state.chatId+".lastMessage"]: {
+        text: message
+      },
+      [state.chatId+".date"]: serverTimestamp()
+    })
+
+    await updateDoc(doc(db, "userChats", state.user.uid), {
+      [state.chatId+".lastMessage"]: {
+        text: message
+      },
+      [state.chatId+".date"]: serverTimestamp()
+    })
   }
 
   return (
@@ -43,6 +57,7 @@ const ChatWindow = () => {
         <h3 className='text-bold text-lg'>{state.user?.displayName}</h3>
       </div>
       <div className='w-full flex flex-col-reverse items-start h-4/5 overflow-y-scroll'>
+        {/* ARREGLAR ESTO */}
         {messages.map((msg, i) => {
           msg.senderId == user.id ? (<MessageSent key={i} msg={msg.message} time={msg.time} />) : (<MessageReceived key={i} msg={msg.message} time={msg.time} />)
         })}
