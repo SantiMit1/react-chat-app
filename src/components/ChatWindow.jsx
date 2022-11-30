@@ -4,8 +4,7 @@ import { MdSend } from 'react-icons/md'
 import { db } from '../../firebase'
 import { AuthContext } from '../context/AuthContext'
 import { ChatContext } from '../context/ChatContext'
-import MessageReceived from './MessageReceived'
-import MessageSent from './MessageSent'
+import Message from './Message'
 
 const ChatWindow = () => {
   const [message, setMessage] = useState("")
@@ -56,10 +55,9 @@ const ChatWindow = () => {
       <div className='w-full py-3 bg-slate-50 text-black text-center'>
         <h3 className='text-bold text-lg'>{state.user?.displayName}</h3>
       </div>
-      <div className='w-full flex flex-col-reverse items-start h-4/5 overflow-y-scroll'>
-        {/* ARREGLAR ESTO */}
+      <div className='w-full flex flex-col items-start h-4/5 overflow-y-scroll'>
         {messages.map((msg, i) => {
-          msg.senderId == user.id ? (<MessageSent key={i} msg={msg.message} time={msg.time} />) : (<MessageReceived key={i} msg={msg.message} time={msg.time} />)
+          return <Message msg={msg.message} time={msg.time} owner={msg.senderId == user.uid ? true : false} key={i} />
         })}
       </div>
       <form onSubmit={sendMessage} className='w-full flex flex-row justify-center items-center py-4 bg-slate-200 text-black'>

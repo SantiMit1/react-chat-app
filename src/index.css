@@ -6,4 +6,12 @@
     .form-input {
         @apply px-2 py-3 rounded-lg shadow outline-none text-black
     }
+
+    .msg-received {
+        @apply self-start flex flex-col items-start bg-slate-700 p-3 rounded-xl m-3
+    }
+
+    .msg-sent {
+        @apply self-end flex flex-col items-start bg-green-700 p-3 rounded-xl m-3
+    }
 }
