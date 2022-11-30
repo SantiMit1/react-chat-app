@@ -56,7 +56,7 @@ const ChatWindow = () => {
         <h3 className='text-bold text-lg'>{state.user?.displayName}</h3>
       </div>
       <div className='w-full flex flex-col items-start h-4/5 overflow-y-scroll'>
-        {messages.map((msg, i) => {
+        {messages?.map((msg, i) => {
           return <Message msg={msg.message} time={msg.time} owner={msg.senderId == user.uid ? true : false} key={i} />
         })}
       </div>
