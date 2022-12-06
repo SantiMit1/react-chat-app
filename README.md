@@ -31,7 +31,7 @@ Una aplicación de chat simple y en tiempo real construida con React, Tailwind C
 
 ## Demo
 
-Puedes ver una demo en vivo de la aplicación en [chat-app-6f452.web.app/](chat-app-6f452.web.app/)
+Puedes ver una demo en vivo de la aplicación en [chat-app-6f452.web.app/](https://chat-app-6f452.web.app/)
 
 ## Recursos
 
