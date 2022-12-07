@@ -10,9 +10,11 @@ const Main = () => {
     const { state } = useContext(ChatContext)
     return (
         <>
-            <button onClick={() => setSidebar(!sidebar)} className={`bg-white text-black p-1 rounded shadow m-2 text-3xl fixed z-20 ${state.user.displayName ? 'block' : 'hidden'}`}><GiHamburgerMenu /></button>
-            <Sidebar toggled={sidebar} toggleSidebar={() => setSidebar(!sidebar)} />
-            <ChatWindow />
+            <button onClick={() => setSidebar(!sidebar)} className={`bg-white text-black p-1 rounded shadow m-2 text-3xl fixed z-20 ${state.user.displayName ? 'block' : 'hidden'} lg:hidden`}><GiHamburgerMenu /></button>
+            <div className='lg:flex lg:flex-row lg:items-center lg:justify-between'>
+                <Sidebar toggled={sidebar} toggleSidebar={() => setSidebar(!sidebar)} />
+                <ChatWindow />
+            </div>
         </>
     )
 }

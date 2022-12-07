@@ -1,5 +1,5 @@
 import { arrayUnion, doc, onSnapshot, serverTimestamp, Timestamp, updateDoc } from 'firebase/firestore'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState, useRef } from 'react'
 import { MdSend } from 'react-icons/md'
 import { db } from '../../firebase'
 import { AuthContext } from '../context/AuthContext'
@@ -11,6 +11,7 @@ const ChatWindow = () => {
   const [messages, setMessages] = useState([])
   const { user } = useContext(AuthContext)
   const { state } = useContext(ChatContext)
+  const messagesRef = useRef(null)
 
   useEffect(() => {
     const unsub = onSnapshot(doc(db, "chats", state.chatId), doc => {
@@ -21,6 +22,10 @@ const ChatWindow = () => {
       unsub()
     }
   }, [state.chatId])
+
+  useEffect(() => {
+    messagesRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [messages])
 
   const sendMessage = async (e) => {
     e.preventDefault()
@@ -51,14 +56,15 @@ const ChatWindow = () => {
   }
 
   return (
-    <div className='w-full h-screen flex flex-col justify-between'>
+    <div className='w-full h-screen flex flex-col justify-between lg:w-3/4'>
       <div className='w-full py-3 bg-slate-50 text-black text-center'>
-        <h3 className='text-bold text-lg'>{state.user?.displayName}</h3>
+        <h3 className='text-bold text-lg'>{state.user.displayName ? state.user.displayName : "Seleccione un contacto"}</h3>
       </div>
-      <div className='w-full flex flex-col items-start h-4/5 overflow-y-scroll'>
+      <div className='w-full flex flex-col items-start h-4/5 overflow-y-scroll '>
         {messages?.map((msg, i) => {
           return <Message msg={msg.message} time={msg.time} owner={msg.senderId == user.uid ? true : false} key={i} />
         })}
+        <div ref={messagesRef}/>
       </div>
       <form onSubmit={sendMessage} className='w-full flex flex-row justify-center items-center py-4 bg-slate-200 text-black'>
         <input onChange={(e) => setMessage(e.target.value)} value={message} className='rounded-l outline-none bg-slate-50 w-10/12 p-2' type="text" />

@@ -86,7 +86,7 @@ const Sidebar = ({ toggled, toggleSidebar }) => {
     }
 
     return (
-        <div className={`flex flex-col items-center justify-start fixed top-0 min-w-full h-screen text-black bg-gray-50 ${toggled ? 'translate-x-0' : '-translate-x-full'} transition z-10`}>
+        <div className={`flex flex-col items-center justify-start fixed top-0 min-w-full h-screen text-black bg-gray-50 ${toggled ? 'translate-x-0' : '-translate-x-full'} transition z-10 lg:translate-x-0 lg:w-1/4 lg:min-w-0 lg:relative`}>
             <div className='flex flex-row justify-around w-full'>
                 <h1 className='text-xl text-semibold p-4'>React Chat App</h1>
                 <button onClick={handleClick} className='text-xl'><BiLogOut /></button>
@@ -102,7 +102,7 @@ const Sidebar = ({ toggled, toggleSidebar }) => {
                     </div>
                 ) : <p className='text-center'>{error}</p>}
             </div>
-            <div className='w-full overflow-y-scroll'>
+            <div className='w-full h-auto overflow-y-scroll'>
                 {Object.entries(chats)?.sort((a,b) => b[1].date - a[1].date).map(chat => {
                     return (<div key={chat[0]} onClick={() => openChat(chat[1].userInfo)}><Chat displayName={chat[1].userInfo.displayName} lastMessage={chat[1].lastMessage?.text} /></div>)
                 })}
